@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Common\Roles;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,9 +16,11 @@ class UserTableSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'John Doe',
+            'name' => 'John',
+            'surname' => 'Doe',
+            'id_number' => '4567890765234568',
             'email' => 'johnD@gmail.com',
-            'password' => bcrypt('eClaims123#'),
-        ]);
+            'password' => bcrypt('Zmg@123#'),
+        ])->assignRole(strtoupper(Roles::CEO));
     }
 }
