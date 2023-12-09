@@ -30,6 +30,7 @@ class User extends Authenticatable implements HasMedia
         'phone_number',
         'gender',
         'race',
+        'role',
         'marital_status',
         'next_kin',
         'kin_number',

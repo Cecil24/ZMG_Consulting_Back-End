@@ -17,6 +17,7 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         $user = parent::toArray($request);
+        $user['roles'] = $this->resource->getRoleNames();
 
         return $user;
     }

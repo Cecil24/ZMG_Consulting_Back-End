@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->string('gender')->nullable();
             $table->string('race')->nullable();
+            $table->string('role')->nullable();
             $table->string('marital_status')->nullable();
             $table->string('next_kin')->nullable();
             $table->string('kin_number')->nullable();
