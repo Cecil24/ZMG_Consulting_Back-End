@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('serial_number')->nullable();
             $table->string('status')->nullable();
             $table->string('imei_number')->nullable();
-            $table->timestamp('model')->nullable();
+            $table->string('model')->nullable();
             $table->timestamp('ram_size')->nullable();
             $table->timestamp('furniture_type')->nullable();
             $table->timestamp('description')->nullable();
