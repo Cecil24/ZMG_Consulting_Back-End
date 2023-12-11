@@ -21,10 +21,10 @@ return new class extends Migration
             $table->string('agent_name')->nullable();
             $table->string('contact_person')->nullable();
             $table->timestamp('year_end_date')->nullable();
-            $table->timestamp('frequency')->nullable();
-            $table->timestamp('status')->nullable();
-            $table->timestamp('type')->nullable();
-            $table->timestamp('nature')->nullable();
+            $table->string('frequency')->nullable();
+            $table->string('status')->nullable();
+            $table->string('type')->nullable();
+            $table->string('nature')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->timestamps();

@@ -3,6 +3,7 @@
 namespace App\services;
 
 use App\Models\Asset;
+use App\Models\Note;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -36,6 +37,9 @@ class AssetService
             'description' => $data['description'],
         ]);
 
+        $noteService = new NoteService();
+        $noteService->captureNote($data['note'],$asset->id,'ASSET');
+
         AttachmentService::processAttachedFiles($data, $asset);
 
         return $asset;
@@ -56,6 +60,7 @@ class AssetService
     public function getAsset($id): Asset
     {
         $asset = Asset::where('id',$id)->first();
+        $asset->notes = Note::with('By')->where('type','ASSET')->where('object_id', $id)->get();
         $media = $asset->getMedia('media');
         $asset->media = $media ?: null;
 
@@ -94,6 +99,9 @@ class AssetService
         }else{
             throw new \Exception('asset not found');
         }
+
+        $noteService = new NoteService();
+        $noteService->captureNote($data['note'],$asset->id,'ASSET');
 
         AttachmentService::processAttachedFiles($data, $asset);
 

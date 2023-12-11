@@ -3,6 +3,7 @@
 namespace App\services;
 
 use App\Common\Roles;
+use App\Models\Note;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
@@ -37,8 +38,16 @@ class EmployeeService
             'date_of_birth' => $data['date_of_birth'],
             'tax_number' => $data['tax_number'],
             'disability' => $data['disability'],
-            'disabilityYes' => $data['disabilityYes']
+            'disabilityYes' => $data['disabilityYes'],
+            'bank_details' => $data['bank_details'],
+            'benefit_details' => $data['benefit_details'],
+            'address_details' => $data['address_details'],
+            'office' => $data['office'],
+
         ]);
+
+        $noteService = new NoteService();
+        $noteService->captureNote($data['note'],$employee->id,'EMPLOYEE');
 
         //Assign Role
         $this->assignRole($employee,$data['role']);
@@ -63,6 +72,7 @@ class EmployeeService
     public function getEmployee($id): User
     {
         $employee = User::where('id',$id)->first();
+        $employee->notes = Note::with('By')->where('type','EMPLOYEE')->where('object_id', $id)->get();
         $media = $employee->getMedia('media');
         $employee->media = $media ?: null;
 
@@ -100,11 +110,19 @@ class EmployeeService
             $employee->tax_number = $data['tax_number'];
             $employee->disability = $data['disability'];
             $employee->disabilityYes = $data['disabilityYes'];
+            $employee->bank_details = $data['bank_details'];
+            $employee->benefit_details = $data['benefit_details'];
+            $employee->address_details = $data['address_details'];
+            $employee->office = $data['office'];
 
             $employee->save();
         }else{
             throw new \Exception('Employee not found');
         }
+
+        $noteService = new NoteService();
+        $noteService->captureNote($data['note'],$employee->id,'EMPLOYEE');
+
         //Remove any roles already assigned
         $employee->roles()->detach();
 

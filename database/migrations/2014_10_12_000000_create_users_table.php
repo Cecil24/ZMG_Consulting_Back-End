@@ -32,6 +32,10 @@ return new class extends Migration
             $table->string('tax_number')->nullable();
             $table->string('disability')->nullable();
             $table->string('disabilityYes')->nullable();
+            $table->text('bank_details',500)->nullable();
+            $table->text('benefit_details', 500)->nullable();
+            $table->text('address_details', 500)->nullable();
+            $table->text('office', 500)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

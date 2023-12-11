@@ -3,6 +3,7 @@
 namespace App\services;
 
 use App\Models\Client;
+use App\Models\Note;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -34,6 +35,9 @@ class ClientService
             'nature' => $data['nature'],
         ]);
 
+        $noteService = new NoteService();
+        $noteService->captureNote($data['note'],$client->id,'CLIENT');
+
         AttachmentService::processAttachedFiles($data, $client);
 
         return $client;
@@ -54,6 +58,7 @@ class ClientService
     public function getClient($id): Client
     {
         $client = Client::where('id',$id)->first();
+        $client->notes = Note::with('By')->where('type','CLIENT')->where('object_id', $id)->get();
         $media = $client->getMedia('media');
         $client->media = $media ?: null;
 
@@ -91,6 +96,9 @@ class ClientService
         }else{
             throw new \Exception('Client not found');
         }
+
+        $noteService = new NoteService();
+        $noteService->captureNote($data['note'],$client->id,'CLIENT');
 
         AttachmentService::processAttachedFiles($data, $client);
 

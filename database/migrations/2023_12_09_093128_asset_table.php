@@ -22,9 +22,9 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->string('imei_number')->nullable();
             $table->string('model')->nullable();
-            $table->timestamp('ram_size')->nullable();
-            $table->timestamp('furniture_type')->nullable();
-            $table->timestamp('description')->nullable();
+            $table->string('ram_size')->nullable();
+            $table->string('furniture_type')->nullable();
+            $table->string('description')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->timestamps();
