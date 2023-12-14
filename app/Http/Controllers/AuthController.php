@@ -14,9 +14,10 @@ class AuthController extends Controller
     /**
      * @param LoginRequest $request
      * @param AuthService $service
-     * @return \Illuminate\Http\Response|void
+     * @return Response|void
      */
-    public function login(LoginRequest $request, AuthService $service){
+    public function login(LoginRequest $request, AuthService $service)
+    {
         try {
             $service->login($request->only(['email','password']));
         }catch (AuthenticationException $exception){
