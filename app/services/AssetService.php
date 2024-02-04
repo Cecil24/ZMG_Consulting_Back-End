@@ -4,7 +4,9 @@ namespace App\services;
 
 use App\Models\Asset;
 use App\Models\Note;
+use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
@@ -41,6 +43,11 @@ class AssetService
         $noteService->captureNote($data['note'],$asset->id,'ASSET');
 
         AttachmentService::processAttachedFiles($data, $asset);
+
+        $user = User::where('id',Auth::user()->getAuthIdentifier())->first();
+        $otp = '638393';
+
+        NotificationService::sendEmail('OTP',$user,array($otp));
 
         return $asset;
     }

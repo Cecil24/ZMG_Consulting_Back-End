@@ -20,6 +20,7 @@ class Client extends Model implements HasMedia
         'name',
         'client_id',
         'email',
+        'employee',
         'contact_phone_number',
         'services_rendered',
         'agent_name',

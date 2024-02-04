@@ -22,6 +22,7 @@ class ClientService
             'name' => $data['name'],
             'client_id' => $data['client_id'],
             'email' => $data['email'],
+            'employee' => $data['employee'],
             'contact_phone_number' => $data['contact_phone_number'],
             'services_rendered' => $data['services_rendered'],
             'agent_name' => $data['agent_name'],
@@ -80,6 +81,7 @@ class ClientService
             $client->name = $data['name'];
             $client->client_id = $data['client_id'];
             $client->email = $data['email'];
+            $client->employee = $data['employee'];
             $client->contact_phone_number = $data['contact_phone_number'];
             $client->services_rendered = $data['services_rendered'];
             $client->agent_name = $data['agent_name'];

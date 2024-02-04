@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('client_id');
             $table->string('email')->unique();
+            $table->string('employee')->nullable();
             $table->string('contact_phone_number')->nullable();
             $table->string('services_rendered')->nullable();
             $table->string('agent_name')->nullable();
