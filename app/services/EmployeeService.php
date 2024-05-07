@@ -2,6 +2,7 @@
 
 namespace App\services;
 
+use App\Common\AuditType;
 use App\Common\Roles;
 use App\Models\Note;
 use App\Models\User;
@@ -53,6 +54,9 @@ class EmployeeService
         $this->assignRole($employee,$data['role']);
 
         AttachmentService::processAttachedFiles($data, $employee);
+
+        $service = new AuditTrailService();
+        $service->logAuditTrail($employee->id, AuditType::CAPTURED_EMPLOYEE);
 
         return $employee;
     }
@@ -130,6 +134,9 @@ class EmployeeService
         $this->assignRole($employee,$data['role']);
 
         AttachmentService::processAttachedFiles($data, $employee);
+
+        $service = new AuditTrailService();
+        $service->logAuditTrail($employee->id, AuditType::UPDATED_EMPLOYEE);
 
         return $employee;
     }

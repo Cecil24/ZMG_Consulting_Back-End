@@ -2,7 +2,10 @@
 
 namespace App\services;
 
+use App\Common\AuditType;
+use App\Exceptions\ClientDocumentException;
 use App\Models\Client;
+use App\Models\ClientDocumentRequests;
 use App\Models\Note;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
@@ -41,6 +44,9 @@ class ClientService
 
         AttachmentService::processAttachedFiles($data, $client);
 
+        $service = new AuditTrailService();
+        $service->logAuditTrail($client->id, AuditType::CAPTURED_CLIENT);
+
         return $client;
     }
 
@@ -64,6 +70,23 @@ class ClientService
         $client->media = $media ?: null;
 
         return $client;
+    }
+
+    /**
+     * @param $id
+     * @return Collection
+     */
+    public function getClientDocuments($id): Collection
+    {
+        $clientD = ClientDocumentRequests::where('client_id',$id)->get();
+        $documents[] = null;
+        foreach ($clientD as $clientDocument) {
+            $media = $clientDocument->getMedia('media');
+            $media = $media ?array_push($documents,$media): null;
+        }
+        $clientD->media = $documents?: null;
+
+        return $clientD;
     }
 
     /**
@@ -104,6 +127,94 @@ class ClientService
 
         AttachmentService::processAttachedFiles($data, $client);
 
+        $service = new AuditTrailService();
+        $service->logAuditTrail($client->id, AuditType::UPDATED_CLIENT);
+
         return $client;
+    }
+
+    public function requestDocuments($data):Client
+    {
+        $client = Client::where('client_id', $data['client_id'])->first();
+
+        $clientRequest = new ClientDocumentRequests();
+
+        $clientRequest->client_id = $client->id;
+        $clientRequest->instructions = $data['note'];
+        $clientRequest->save();
+
+        NotificationService::sendServiceProviderEmailForAllocation(
+            'CLIENT_DOCUMENTS',
+            $client,
+            array($data['note']),
+            $this->createLinkForClientDocument($clientRequest->id)
+        );
+
+        return $client;
+    }
+
+    public function createLinkForClientDocument(int $id) : string
+    {
+        return env("FRONT_END_URL") . "/client-documents/upload-document?Token=" . encrypt($id);
+    }
+
+    public function submitDocuments($data): void
+    {
+        try {
+            $client = Client::where('id', $data['client_id'])->first();
+            $noteService = new NoteService();
+            $clientDocument = ClientDocumentRequests::where('id',$data['client_id'])->latest()->first();
+            AttachmentService::processAttachedFiles($data, $clientDocument);
+            $this->uploadClaimDocuments($data, $clientDocument);
+
+            if($clientDocument){
+                $clientDocument['is_submitted'] = 1;
+                $clientDocument->save();
+            }
+
+
+            $noteService->captureNote($data['note'],$client->id,'CLIENT');
+
+
+            NotificationService::sendEmail(
+                'CLIENT_DOCUMENTS',
+                $client,
+                [$client->name]);
+
+        }catch(\Exception $e){
+
+        }
+    }
+
+    /**
+     * @throws ClientDocumentException
+     */
+    public function getClientByToken($data)
+    {
+        $clientDocument = ClientDocumentRequests::where('id', decrypt($data['token']))->get()->first();
+
+        if($clientDocument){
+            if($clientDocument->is_submitted){
+                throw new ClientDocumentException("Documents already submitted");
+            }
+            return $clientDocument;
+        }else{
+            throw new ClientDocumentException("Client Documents Request not found");
+        }
+    }
+
+    /**
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
+     */
+    public function uploadClaimDocuments($data, $client): void
+    {
+        $clientD = ClientDocumentRequests::where('client_id',$data['client_id'])->get();
+        foreach ($clientD as $client){
+            if($client){
+                $client['is_submitted'] = 1;
+                $client->save();
+            }
+        }
     }
 }

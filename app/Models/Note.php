@@ -37,7 +37,7 @@ class Note extends Model implements HasMedia
      */
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('claim-motivation')
+        $this->addMediaCollection('note')
             ->acceptsFile(function (File $file) {
                 return in_array($file->mimeType, [
                     'application/pdf',

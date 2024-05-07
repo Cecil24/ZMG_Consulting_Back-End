@@ -2,6 +2,7 @@
 
 namespace App\services;
 
+use App\Common\AuditType;
 use App\Models\Asset;
 use App\Models\Note;
 use App\Models\User;
@@ -44,10 +45,13 @@ class AssetService
 
         AttachmentService::processAttachedFiles($data, $asset);
 
-        $user = User::where('id',Auth::user()->getAuthIdentifier())->first();
-        $otp = '638393';
+        $service = new AuditTrailService();
+        $service->logAuditTrail($asset->id, AuditType::CAPTURED_ASSET);
 
-        NotificationService::sendEmail('OTP',$user,array($otp));
+//        $user = User::where('id',Auth::user()->getAuthIdentifier())->first();
+//        $otp = '638393';
+//
+//        NotificationService::sendEmail('OTP',$user,array($otp));
 
         return $asset;
     }
@@ -111,6 +115,9 @@ class AssetService
         $noteService->captureNote($data['note'],$asset->id,'ASSET');
 
         AttachmentService::processAttachedFiles($data, $asset);
+
+        $service = new AuditTrailService();
+        $service->logAuditTrail($asset->id, AuditType::UPDATED_ASSET);
 
         return $asset;
     }

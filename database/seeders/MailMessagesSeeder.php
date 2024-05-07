@@ -15,8 +15,8 @@ class MailMessagesSeeder extends Seeder
     {
         MailMessage::create([
             'type' => 'SUCCESS',
-            'body' => 'Your OTP is param0.',
-            'subject' => 'OTP'
+            'body' => 'param0.',
+            'subject' => 'CLIENT_DOCUMENTS'
         ]);
     }
 }
