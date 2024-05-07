@@ -2,14 +2,9 @@
 
 namespace App\services;
 
-use App\Mail\BrokerManagerMail;
-use App\Mail\SupplerMail;
 use App\Mail\UpdateMail;
+use App\Mail\ClientDocumentMail;
 use App\Models\MailMessage;
-use App\Mail\BrokerCompanyMail;
-use App\Mail\BrokerMail;
-use App\Mail\ClaimServiceProvider;
-use App\Mail\ServiceProviderEmail;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
@@ -55,6 +50,18 @@ class NotificationService
             $userRole = User::with('roles')->where('id', $user->id)->first();
             Mail::to($user)->later(now()->addSecond(), new UpdateMail($userRole, $message, $mail->subject ));
         }
+    }
+
+    public static function sendServiceProviderEmailForAllocation($selector , $client, array $params, $url): void
+    {
+
+        $mail = MailMessage::where('subject', $selector)->first();
+        $message = $mail->body;
+        for( $i=0 ; $i<count($params) ; $i++){
+            $temp = 'param' . $i;
+            $message = str_replace($temp, $params[$i], $message);
+        }
+        Mail::to($client)->later(now()->addSecond(), new ClientDocumentMail($client, $message, $url));
     }
 
 }
