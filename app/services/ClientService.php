@@ -143,12 +143,18 @@ class ClientService
         $clientRequest->instructions = $data['note'];
         $clientRequest->save();
 
+        $noteService = new NoteService();
+        $noteService->captureNote($data['note'],$client->id,'CLIENT');
+
         NotificationService::sendServiceProviderEmailForAllocation(
             'CLIENT_DOCUMENTS',
             $client,
             array($data['note']),
             $this->createLinkForClientDocument($clientRequest->id)
         );
+
+        $service = new AuditTrailService();
+        $service->logAuditTrail($client->id, AuditType::REQUESTED_DOCUMENTS);
 
         return $client;
     }
