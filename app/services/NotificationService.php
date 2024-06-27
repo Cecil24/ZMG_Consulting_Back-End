@@ -18,7 +18,7 @@ class NotificationService
      */
     public static function sendEmail($selector , $user, array $params): void
     {
-        $user = User::where('id', $user->id)->first();
+        $userAdmin = User::where('id', $user->id)->first();
 
         $mail = MailMessage::where('subject', $selector)->first();
         $message = $mail->body;
@@ -26,6 +26,7 @@ class NotificationService
             $temp = 'param' . $i;
             $message = str_replace($temp, $params[$i], $message);
         }
+
         Mail::to($user)->later(now()->addSecond(), new UpdateMail($user, $message, $mail->subject ));
 
     }
