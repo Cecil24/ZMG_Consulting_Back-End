@@ -7,6 +7,7 @@ use App\Exceptions\ClientDocumentException;
 use App\Models\Client;
 use App\Models\ClientDocumentRequests;
 use App\Models\Note;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -168,6 +169,8 @@ class ClientService
     {
         try {
             $client = Client::where('id', $data['client_id'])->first();
+            $admin = User::get()->first();
+
             $noteService = new NoteService();
             $clientDocument = ClientDocumentRequests::where('id',$data['client_id'])->latest()->first();
             AttachmentService::processAttachedFiles($data, $clientDocument);
@@ -178,14 +181,14 @@ class ClientService
                 $clientDocument->save();
             }
 
+            NotificationService::sendEmail(
+                'CLIENT_DOCUMENTS',
+                $admin,
+                ["Documents have been submitted"]);
+
 
             $noteService->captureNote($data['note'],$client->id,'CLIENT');
 
-
-            NotificationService::sendEmail(
-                'CLIENT_DOCUMENTS',
-                $client,
-                [$client->name]);
 
         }catch(\Exception $e){
 
