@@ -31,6 +31,15 @@ class EmployeeController extends Controller
     }
 
     /**
+     * @param EmployeeService $service
+     * @return Response
+     */
+    public function getActiveEmployees(EmployeeService $service): Response
+    {
+        return $this->json($service->getActiveEmployees()->toArray());
+    }
+
+    /**
      * @param GetEmployeeRequest $request
      * @param EmployeeService $service
      * @return Response

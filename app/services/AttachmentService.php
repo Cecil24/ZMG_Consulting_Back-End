@@ -21,11 +21,19 @@ class AttachmentService
      */
     public static function handlePossibleFileUpload($request, $model, string $key, string $classification): void {
 
-        if ($request->hasFile($key)) {
-            $model->addMediaFromRequest($key)
-                ->withCustomProperties(['classification'=> $classification])
-                ->toMediaCollection('application-documents');
+        try {
+            if ($request->hasFile($key)) {
+                $model->addMediaFromRequest($key)
+                    ->withCustomProperties(['classification' => $classification])
+                    ->toMediaCollection('application-documents');
+                error_log("Uploaded file for key: $key"); // Log successful upload
+            } else {
+                error_log("File not found for key: $key"); // Log if file not found
+            }
+        } catch (\Exception $e) {
+            error_log("Error uploading file for key $key: " . $e->getMessage()); // Log any exceptions
         }
+
     }
 
     /**
@@ -37,13 +45,18 @@ class AttachmentService
      */
     public static function processAttachedFiles($data , $model): void
     {
-        for( $i=1 ; $i<=count($data->files) ; $i++){
-            self::handlePossibleFileUpload(
-                $data,
-                $model,
-                'attachment_' . $i,
-                'Attachment_' . $i
-            );
+        foreach ($data->files as $key => $file) {
+            if (preg_match('/^attachment_\d+$/', $key)) {
+                $classification = $key;
+                self::handlePossibleFileUpload(
+                    $data,
+                    $model,
+                    $key,
+                    $classification
+                );
+            } else {
+                error_log("Unexpected file key: $key"); // Log unexpected keys
+            }
         }
     }
 

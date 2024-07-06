@@ -69,6 +69,15 @@ class EmployeeService
         return User::get();
     }
 
+
+    /**
+     * @return Collection
+     */
+    public function getActiveEmployees(): Collection
+    {
+        return User::where('employee_status','=','Active')->get();
+    }
+
     /**
      * @param $id
      * @return User
