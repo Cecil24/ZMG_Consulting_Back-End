@@ -41,7 +41,19 @@ class Client extends Model implements HasMedia
     {
         $this->addMediaCollection('application-documents')
             ->acceptsFile(function (File $file) {
-                return $file->mimeType == 'application/pdf';
+                $allowedMimeTypes = [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'text/plain',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    // Add other MIME types as needed
+                ];
+
+                return in_array($file->mimeType, $allowedMimeTypes);
             })->useDisk('media');
     }
 }

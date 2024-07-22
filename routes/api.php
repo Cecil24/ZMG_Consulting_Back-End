@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     //Employee APIs
     Route::post('/capture-employee', [ EmployeeController::class, 'captureEmployee']);
     Route::get('/get-employees', [ EmployeeController::class, 'getEmployees']);
+    Route::get('/get-active-employees', [ EmployeeController::class, 'getActiveEmployees']);
     Route::get('/get-employee', [ EmployeeController::class, 'getEmployee']);
     Route::post('/update-employee', [ EmployeeController::class, 'updateEmployee']);
 
