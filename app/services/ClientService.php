@@ -9,6 +9,7 @@ use App\Models\ClientDocumentRequests;
 use App\Models\Note;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
@@ -142,6 +143,7 @@ class ClientService
 
         $clientRequest->client_id = $client->id;
         $clientRequest->instructions = $data['note'];
+        $clientRequest->created_by = Auth::user()->getAuthIdentifier();
         $clientRequest->save();
 
         $noteService = new NoteService();
@@ -169,10 +171,12 @@ class ClientService
     {
         try {
             $client = Client::where('id', $data['client_id'])->first();
-            $admin = User::get()->first();
 
             $noteService = new NoteService();
             $clientDocument = ClientDocumentRequests::where('id',$data['client_id'])->latest()->first();
+
+            $admin = User::where('id',$clientDocument->created_by)->firstOrFail();
+
             AttachmentService::processAttachedFiles($data, $clientDocument);
             $this->uploadClaimDocuments($data, $clientDocument);
 
