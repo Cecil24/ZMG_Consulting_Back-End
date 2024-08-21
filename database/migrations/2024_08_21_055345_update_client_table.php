@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('client_document_requests', function (Blueprint $table) {
+        Schema::table('clients', function (Blueprint $table) {
             // Add your changes here
-            $table->integer('created_by')->nullable();
+            $table->string('vat')->nullable();
+            $table->string('paye')->nullable();
+            $table->string('customs')->nullable();
+            $table->string('income_tax')->nullable();
             // $table->dropColumn('old_column');
             // $table->renameColumn('old_name', 'new_name');
         });
@@ -24,9 +27,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('client_document_requests', function (Blueprint $table) {
+        Schema::table('clients', function (Blueprint $table) {
             // Reverse your changes here
-            $table->dropColumn('created_by');
+            $table->dropColumn('vat');
+            $table->dropColumn('paye');
+            $table->dropColumn('customs');
+            $table->dropColumn('income_tax');
             // $table->string('old_column')->nullable();
             // $table->renameColumn('new_name', 'old_name');
         });

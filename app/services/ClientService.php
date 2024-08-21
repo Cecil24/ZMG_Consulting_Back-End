@@ -39,6 +39,10 @@ class ClientService
             'status' => $data['status'],
             'type' => $data['type'],
             'nature' => $data['nature'],
+            'vat' => $data['vat'],
+            'paye' => $data['paye'],
+            'customs' => $data['customs'],
+            'income_tax' => $data['income_tax_number'],
         ]);
 
         $noteService = new NoteService();
@@ -118,6 +122,10 @@ class ClientService
             $client->status = $data['status'];
             $client->type = $data['type'];
             $client->nature = $data['nature'];
+            $client->vat = $data['vat'];
+            $client->paye = $data['paye'];
+            $client->customs = $data['customs'];
+            $client->income_tax = $data['income_tax_number'];
 
             $client->save();
         }else{
