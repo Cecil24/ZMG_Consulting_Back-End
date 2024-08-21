@@ -32,6 +32,10 @@ class Client extends Model implements HasMedia
         'status',
         'type',
         'nature',
+        'vat',
+        'paye',
+        'customs',
+        'income_tax',
     ];
 
     /**
